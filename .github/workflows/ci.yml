@@ -1,0 +1,58 @@
+name: CI - Quality Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # --- JOB BACKEND ---
+  backend-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Ruff (Fast Linter)
+        run: pip install ruff
+
+      - name: Run Ruff Linting
+        # On check le dossier backend pour s'assurer que le code est propre
+        run: ruff check backend/
+
+  # --- JOB FRONTEND ---
+  frontend-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd web
+          npm install
+
+      - name: Run ESLint
+        run: |
+          cd web
+          npm run lint
+
+      - name: Build Check (Next.js)
+        # On lance le build pour vérifier qu'il n'y a pas d'erreurs TypeScript
+        # On désactive la génération de sources maps pour aller plus vite
+        run: |
+          cd web
+          GENERATE_SOURCEMAP=false npm run build
