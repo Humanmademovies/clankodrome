@@ -43,8 +43,6 @@ jobs:
           npm install
 
       - name: Run ESLint
-        env:
-          ESLINT_USE_FLAT_CONFIG: "false"
         run: |
           cd web
           npx eslint src/ --ext .js,.jsx,.ts,.tsx --quiet
