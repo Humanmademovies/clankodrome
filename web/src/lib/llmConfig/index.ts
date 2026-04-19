@@ -31,6 +31,7 @@ import CustomModal from "@/sections/modals/llmConfig/CustomModal";
 import LMStudioModal from "@/sections/modals/llmConfig/LMStudioModal";
 import LiteLLMProxyModal from "@/sections/modals/llmConfig/LiteLLMProxyModal";
 import BifrostModal from "@/sections/modals/llmConfig/BifrostModal";
+import GroqModal from "@/sections/modals/llmConfig/GroqModal";
 import OpenAICompatibleModal from "@/sections/modals/llmConfig/OpenAICompatibleModal";
 
 // ─── Text (LLM) providers ────────────────────────────────────────────────────
@@ -96,6 +97,12 @@ const PROVIDERS: Record<string, ProviderEntry> = {
     productName: "OpenRouter",
     companyName: "OpenRouter",
     Modal: OpenRouterModal,
+  },
+  [LLMProviderName.GROQ]: {
+    icon: SvgOpenrouter, // placeholder — à remplacer quand tu auras une icône Groq
+    productName: "Groq",
+    companyName: "Groq",
+    Modal: GroqModal,
   },
   [LLMProviderName.LM_STUDIO]: {
     icon: SvgLmStudio,

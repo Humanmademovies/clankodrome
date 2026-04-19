@@ -289,6 +289,33 @@ export const fetchOpenRouterModels = async (
   }
 };
 
+
+export const fetchGroqModels = async (
+  params: { api_key: string; provider_name?: string }
+): Promise<{ models: ModelConfiguration[]; error?: string }> => {
+  if (!params.api_key) {
+    return { models: [], error: "API Key is required" };
+  }
+  try {
+    const response = await fetch("/api/admin/llm/groq/available-models", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        api_key: params.api_key,
+        provider_name: params.provider_name,
+      }),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      return { models: [], error: error.detail ?? "Failed to fetch Groq models" };
+    }
+    const models = await response.json();
+    return { models: models.map(standardizeModelConfig) };
+  } catch (e) {
+    return { models: [], error: String(e) };
+  }
+};
+
 /**
  * Fetches LM Studio models directly without any form state dependencies.
  * Uses snake_case params to match API structure.
@@ -570,6 +597,11 @@ export const fetchModels = async (
         api_key: formValues.api_key,
         provider_name: formValues.name,
       });
+    case LLMProviderName.GROQ:
+      return fetchGroqModels({
+        api_key: formValues.api_key,
+        provider_name: formValues.name,
+      });
     case LLMProviderName.LITELLM_PROXY:
       return fetchLiteLLMProxyModels({
         api_base: formValues.api_base,
@@ -595,3 +627,4 @@ export const fetchModels = async (
       return { models: [], error: `Unknown provider: ${providerName}` };
   }
 };
+

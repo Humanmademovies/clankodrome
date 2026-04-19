@@ -14,6 +14,7 @@ export enum LLMProviderName {
   BIFROST = "bifrost",
   OPENAI_COMPATIBLE = "openai_compatible",
   CUSTOM = "custom",
+  GROQ = "groq",
 }
 
 export interface ModelConfiguration {
