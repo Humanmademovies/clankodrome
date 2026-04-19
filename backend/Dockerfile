@@ -77,8 +77,7 @@ ENV PATH="/root/.opencode/bin:${PATH}"
 COPY ./requirements/default.txt /tmp/requirements.txt
 
 RUN uv pip install --system --no-cache-dir --upgrade \
-        -r /tmp/requirements.txt \
-   
+        -r /tmp/requirements.txt && \
     pip uninstall -y py && \
     playwright install chromium && \
     playwright install-deps chromium && \
