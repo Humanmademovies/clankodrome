@@ -45,7 +45,7 @@ jobs:
       - name: Run ESLint
         run: |
           cd web
-          npx eslint src/ --ext .js,.jsx,.ts,.tsx --quiet
+          npx eslint@8 src/ --ext .js,.jsx,.ts,.tsx --quiet
 
       - name: Build Check (Next.js)
         run: |
