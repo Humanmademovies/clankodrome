@@ -289,6 +289,12 @@ export const fetchOpenRouterModels = async (
   }
 };
 
+interface GroqModelResponse {
+  name: string;
+  display_name: string;
+  max_input_tokens: number | null;
+  supports_image_input: boolean;
+}
 
 export const fetchGroqModels = async (
   params: { api_key: string; provider_name?: string }
@@ -309,8 +315,16 @@ export const fetchGroqModels = async (
       const error = await response.json();
       return { models: [], error: error.detail ?? "Failed to fetch Groq models" };
     }
-    const models = await response.json();
-    return { models: models.map(standardizeModelConfig) };
+    const data: GroqModelResponse[] = await response.json();
+    const models: ModelConfiguration[] = data.map((m) => ({
+      name: m.name,
+      display_name: m.display_name,
+      is_visible: true,
+      max_input_tokens: m.max_input_tokens,
+      supports_image_input: m.supports_image_input,
+      supports_reasoning: false,
+    }));
+    return { models };
   } catch (e) {
     return { models: [], error: String(e) };
   }
