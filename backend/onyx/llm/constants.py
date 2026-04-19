@@ -27,7 +27,7 @@ class LlmProviderNames(str, Enum):
     LITELLM_PROXY = "litellm_proxy"
     BIFROST = "bifrost"
     OPENAI_COMPATIBLE = "openai_compatible"
-
+    GROQ = "groq"
     def __str__(self) -> str:
         """Needed so things like:
 
@@ -48,6 +48,7 @@ WELL_KNOWN_PROVIDER_NAMES = [
     LlmProviderNames.LITELLM_PROXY,
     LlmProviderNames.BIFROST,
     LlmProviderNames.OPENAI_COMPATIBLE,
+    LlmProviderNames.GROQ,
 ]
 
 

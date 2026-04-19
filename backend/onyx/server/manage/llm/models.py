@@ -490,3 +490,14 @@ class OpenAICompatibleFinalModelResponse(BaseModel):
     max_input_tokens: int | None
     supports_image_input: bool
     supports_reasoning: bool
+
+class GroqModelsRequest(BaseModel):
+    api_key: str
+    provider_name: str | None = None
+
+
+class GroqFinalModelResponse(BaseModel):
+    name: str
+    display_name: str
+    max_input_tokens: int | None
+    supports_image_input: bool

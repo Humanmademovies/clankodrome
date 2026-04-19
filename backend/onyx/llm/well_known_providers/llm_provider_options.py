@@ -23,6 +23,7 @@ from onyx.llm.well_known_providers.constants import OPENAI_COMPATIBLE_PROVIDER_N
 from onyx.llm.well_known_providers.constants import OPENAI_PROVIDER_NAME
 from onyx.llm.well_known_providers.constants import OPENROUTER_PROVIDER_NAME
 from onyx.llm.well_known_providers.constants import VERTEXAI_PROVIDER_NAME
+from onyx.llm.well_known_providers.constants import GROQ_PROVIDER_NAME
 from onyx.llm.well_known_providers.models import WellKnownLLMProviderDescriptor
 from onyx.server.manage.llm.models import ModelConfigurationView
 from onyx.utils.logger import setup_logger
@@ -53,6 +54,7 @@ def _get_provider_to_models_map() -> dict[str, list[str]]:
         LITELLM_PROXY_PROVIDER_NAME: [],  # Dynamic - fetched from LiteLLM proxy API
         BIFROST_PROVIDER_NAME: [],  # Dynamic - fetched from Bifrost API
         OPENAI_COMPATIBLE_PROVIDER_NAME: [],  # Dynamic - fetched from OpenAI-compatible API
+        GROQ_PROVIDER_NAME: [],  # Dynamic - fetched from Groq API
     }
 
 
@@ -339,6 +341,7 @@ def get_provider_display_name(provider_name: str) -> str:
         OPENROUTER_PROVIDER_NAME: "OpenRouter",
         LITELLM_PROXY_PROVIDER_NAME: "LiteLLM Proxy",
         OPENAI_COMPATIBLE_PROVIDER_NAME: "OpenAI-Compatible",
+        GROQ_PROVIDER_NAME: "Groq",
     }
 
     if provider_name in _ONYX_PROVIDER_DISPLAY_NAMES:

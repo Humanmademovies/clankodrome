@@ -98,6 +98,9 @@ from onyx.utils.encryption import mask_string as mask_with_ellipsis
 from onyx.utils.logger import setup_logger
 from shared_configs.configs import MULTI_TENANT
 
+from onyx.server.manage.llm.models import GroqFinalModelResponse
+from onyx.server.manage.llm.models import GroqModelsRequest
+
 logger = setup_logger()
 
 admin_router = APIRouter(prefix="/admin/llm")
@@ -1755,3 +1758,65 @@ def _get_openai_compatible_server_response(
         source_name="OpenAI-Compatible",
         api_key=api_key,
     )
+
+@admin_router.post("/groq/available-models")
+def get_groq_available_models(
+    request: GroqModelsRequest,
+    _: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> list[GroqFinalModelResponse]:
+    """Fetch available models from Groq API."""
+    response_json = _get_openai_compatible_models_response(
+        url="https://api.groq.com/openai/v1/models",
+        source_name="Groq",
+        api_key=request.api_key,
+    )
+
+    models = response_json.get("data", [])
+    if not isinstance(models, list) or len(models) == 0:
+        raise OnyxError(
+            OnyxErrorCode.VALIDATION_ERROR,
+            "No models found from Groq API",
+        )
+
+    results: list[GroqFinalModelResponse] = []
+    for model in models:
+        model_id = model.get("id", "")
+        if not model_id:
+            continue
+        if is_embedding_model(model_id):
+            continue
+        results.append(
+            GroqFinalModelResponse(
+                name=model_id,
+                display_name=model.get("id", model_id),
+                max_input_tokens=model.get("context_window"),
+                supports_image_input="vision" in model_id.lower(),
+            )
+        )
+
+    if not results:
+        raise OnyxError(
+            OnyxErrorCode.VALIDATION_ERROR,
+            "No compatible models found from Groq",
+        )
+
+    sorted_results = sorted(results, key=lambda m: m.name.lower())
+
+    if request.provider_name:
+        _sync_fetched_models(
+            db_session=db_session,
+            provider_name=request.provider_name,
+            models=[
+                SyncModelEntry(
+                    name=r.name,
+                    display_name=r.display_name,
+                    max_input_tokens=r.max_input_tokens,
+                    supports_image_input=r.supports_image_input,
+                )
+                for r in sorted_results
+            ],
+            source_label="Groq",
+        )
+
+    return sorted_results
