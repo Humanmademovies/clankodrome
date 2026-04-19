@@ -204,6 +204,17 @@ export interface LMStudioFetchParams {
   signal?: AbortSignal;
 }
 
+export interface GroqFetchParams {
+  api_key: string | undefined;
+  provider_name?: string;
+}
+
+export interface GroqModelResponse {
+  name: string;
+  display_name: string;
+  max_input_tokens: number | null;
+  supports_image_input: boolean;
+}
 export type FetchModelsParams =
   | BedrockFetchParams
   | OllamaFetchParams

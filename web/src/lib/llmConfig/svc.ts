@@ -31,6 +31,8 @@ import {
   BifrostFetchParams,
   OpenAICompatibleFetchParams,
   OpenAICompatibleModelResponse,
+  GroqFetchParams,
+  GroqModelResponse
 } from "@/interfaces/llm";
 
 /**
@@ -289,17 +291,12 @@ export const fetchOpenRouterModels = async (
   }
 };
 
-interface GroqModelResponse {
-  name: string;
-  display_name: string;
-  max_input_tokens: number | null;
-  supports_image_input: boolean;
-}
 
 export const fetchGroqModels = async (
-  params: { api_key: string; provider_name?: string }
+  params: GroqFetchParams
 ): Promise<{ models: ModelConfiguration[]; error?: string }> => {
-  if (!params.api_key) {
+  const apiKey = params.api_key;
+  if (!apiKey) {
     return { models: [], error: "API Key is required" };
   }
   try {
@@ -307,13 +304,19 @@ export const fetchGroqModels = async (
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        api_key: params.api_key,
+        api_key: apiKey,
         provider_name: params.provider_name,
       }),
     });
     if (!response.ok) {
-      const error = await response.json();
-      return { models: [], error: error.detail ?? "Failed to fetch Groq models" };
+      let errorMessage = "Failed to fetch models";
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.detail || errorData.message || errorMessage;
+      } catch {
+        // ignore JSON parsing errors
+      }
+      return { models: [], error: errorMessage };
     }
     const data: GroqModelResponse[] = await response.json();
     const models: ModelConfiguration[] = data.map((m) => ({
@@ -325,8 +328,10 @@ export const fetchGroqModels = async (
       supports_reasoning: false,
     }));
     return { models };
-  } catch (e) {
-    return { models: [], error: String(e) };
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    return { models: [], error: errorMessage };
   }
 };
 
