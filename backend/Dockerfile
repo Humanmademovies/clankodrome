@@ -75,10 +75,10 @@ ENV PATH="/root/.opencode/bin:${PATH}"
 # Install Python dependencies
 # Remove py which is pulled in by retry, py is not needed and is a CVE
 COPY ./requirements/default.txt /tmp/requirements.txt
-COPY ./requirements/ee.txt /tmp/ee-requirements.txt
+
 RUN uv pip install --system --no-cache-dir --upgrade \
         -r /tmp/requirements.txt \
-        -r /tmp/ee-requirements.txt && \
+   
     pip uninstall -y py && \
     playwright install chromium && \
     playwright install-deps chromium && \
@@ -127,7 +127,7 @@ tiktoken.get_encoding('cl100k_base')"
 WORKDIR /app
 
 # Enterprise Version Files
-COPY --chown=onyx:onyx ./ee /app/ee
+
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Set up application files
