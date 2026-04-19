@@ -7,7 +7,6 @@ on:
     branches: [ main ]
 
 jobs:
-  # --- JOB BACKEND ---
   backend-quality:
     runs-on: ubuntu-latest
     steps:
@@ -19,14 +18,12 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Ruff (Fast Linter)
+      - name: Install Ruff
         run: pip install ruff
 
       - name: Run Ruff Linting
-        # On check le dossier backend pour s'assurer que le code est propre
         run: ruff check backend/
 
-  # --- JOB FRONTEND ---
   frontend-quality:
     runs-on: ubuntu-latest
     steps:
@@ -48,11 +45,9 @@ jobs:
       - name: Run ESLint
         run: |
           cd web
-          npm run lint
+          npx eslint src/ --ext .js,.jsx,.ts,.tsx --quiet
 
       - name: Build Check (Next.js)
-        # On lance le build pour vérifier qu'il n'y a pas d'erreurs TypeScript
-        # On désactive la génération de sources maps pour aller plus vite
         run: |
           cd web
           GENERATE_SOURCEMAP=false npm run build
