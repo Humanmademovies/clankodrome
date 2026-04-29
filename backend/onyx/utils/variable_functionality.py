@@ -38,9 +38,7 @@ global_version = OnyxVersion()
 # even without ENABLE_PAID_ENTERPRISE_EDITION_FEATURES being set.
 # Eventually, ENABLE_PAID_ENTERPRISE_EDITION_FEATURES will be removed
 # and license enforcement will be the only mechanism for EE features.
-_LICENSE_ENFORCEMENT_ENABLED = (
-    os.environ.get("LICENSE_ENFORCEMENT_ENABLED", "true").lower() == "true"
-)
+_LICENSE_ENFORCEMENT_ENABLED = False
 
 
 def set_is_ee_based_on_env_variable() -> None:
